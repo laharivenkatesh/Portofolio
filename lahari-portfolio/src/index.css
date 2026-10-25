@@ -1,0 +1,193 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-void text-ink font-body antialiased;
+  font-weight: 430;
+  /* two very wide, low-contrast maroon washes — tonal, never a hard gradient */
+  background-image:
+    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(99, 0, 0, 0.30) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 55% at 0% 100%, rgba(90, 7, 23, 0.22) 0%, transparent 70%);
+  background-attachment: fixed;
+}
+
+/* Bodoni's optical-size axis makes hairlines vanishingly thin at large sizes;
+   capping it keeps the Didone character but stays readable */
+.font-display {
+  font-variation-settings: 'opsz' 26;
+}
+
+/* fine film grain over everything — softens banding and adds an editorial, printed feel */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 0.95  0 0 0 0 0.9  0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection {
+  background: rgba(129, 1, 0, 0.75);
+  color: #FAF2E7;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #1B1717; }
+::-webkit-scrollbar-thumb {
+  background: #630000;
+  border-radius: 8px;
+  border: 2px solid #1B1717;
+}
+::-webkit-scrollbar-thumb:hover { background: #810100; }
+
+/* Focus visibility for accessibility */
+a:focus-visible, button:focus-visible {
+  outline: 1px solid #D9AF98;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+@layer components {
+  .glass {
+    @apply bg-glass-fill backdrop-blur-xl border border-glass-border;
+  }
+
+  .glass-card {
+    @apply glass rounded-xl relative overflow-hidden transition-colors duration-300;
+  }
+
+  .glass-card:hover {
+    border-color: rgba(217, 175, 152, 0.3);
+  }
+
+  .section-pad {
+    @apply px-6 sm:px-10 lg:px-24 py-24 md:py-32;
+  }
+
+  /* small tracked uppercase label, led by a tiny four-point star like the reference */
+  .eyebrow {
+    @apply font-label text-xs font-semibold tracking-[0.3em] uppercase text-accent-rose;
+  }
+  .eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin-right: 0.9em;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23D89E93' d='M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+
+  /* solid tonal accent — kept as a class so existing markup still works */
+  .gradient-text {
+    @apply text-accent-blush;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2.5 px-6 py-3 rounded-sm font-label font-semibold text-[12px] uppercase tracking-[0.16em]
+      bg-accent-blush text-navy-deep transition-colors duration-300 hover:bg-cream;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2.5 px-6 py-3 rounded-sm font-label font-semibold text-[12px] uppercase tracking-[0.16em]
+      text-ink border border-accent-blush/30 transition-colors duration-300 hover:border-accent-blush hover:bg-accent-blush/10;
+  }
+}
+
+/* ambient blooms: big, blurred, slow — atmosphere rather than decoration */
+.ambient {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.ambient span {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  animation: drift 26s ease-in-out infinite alternate;
+}
+
+/* ---------- Custom cursor ---------- */
+@media (hover: hover) and (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: none !important;
+  }
+  /* keep the native pointer over video so its controls (and fullscreen) stay usable */
+  html.has-custom-cursor video {
+    cursor: auto !important;
+  }
+}
+
+.cursor-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+}
+
+.cursor-halo {
+  width: 200px;
+  height: 200px;
+  margin: -100px 0 0 -100px;
+  transition: opacity 0.35s ease;
+}
+.cursor-halo > i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgba(217, 175, 152, 0.13) 0%,
+    rgba(217, 175, 152, 0.06) 32%,
+    rgba(201, 143, 134, 0.025) 54%,
+    transparent 70%
+  );
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cursor-star {
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  transition: opacity 0.25s ease;
+}
+.cursor-star > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 3px rgba(217, 175, 152, 0.5));
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cursor-hidden { opacity: 0; }
+[data-cursor='link'] .cursor-halo > i { transform: scale(1.3); }
+[data-cursor='link'] .cursor-star > svg { transform: rotate(90deg) scale(1.35); }
+[data-cursor='down'] .cursor-halo > i { transform: scale(0.75); }
+[data-cursor='down'] .cursor-star > svg { transform: rotate(45deg) scale(0.8); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
